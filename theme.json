@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        { "name": "Negro",    "slug": "negro",    "color": "#131313" },
+        { "name": "Primario", "slug": "primario", "color": "#ff8d6a" },
+        { "name": "Gris",     "slug": "gris",     "color": "#edebea" },
+        { "name": "Blanco",   "slug": "blanco",   "color": "#ffffff" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "name": "Akzidenz-Grotesk BQ",
+          "slug": "akzidenz",
+          "fontFamily": "\"Akzidenz-Grotesk BQ\", sans-serif"
+        },
+        {
+          "name": "SaaSeriesEDOT",
+          "slug": "saaseries",
+          "fontFamily": "\"SaaSeriesEDOT\", serif"
+        }
+      ],
+      "fontSizes": [
+        { "name": "Pequeño",  "slug": "small",    "size": "0.875rem" },
+        { "name": "Normal",   "slug": "medium",   "size": "1rem"     },
+        { "name": "Grande",   "slug": "large",    "size": "1.25rem"  },
+        { "name": "X-Grande", "slug": "x-large",  "size": "1.75rem"  },
+        { "name": "2X-Grande","slug": "xx-large", "size": "2.5rem"   },
+        { "name": "3X-Grande","slug": "xxx-large","size": "3.5rem"   }
+      ]
+    },
+    "layout": {
+      "contentSize": "860px",
+      "wideSize": "1200px"
+    }
+  }
+}

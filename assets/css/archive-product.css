@@ -1,0 +1,160 @@
+/* ================================================================
+   ARCHIVE / CATEGORÍA DE PRODUCTOS
+================================================================ */
+
+/* ── Hero ── */
+.archive-hero {
+	background-color: var(--color-gris);
+	padding: 3rem 0 2.5rem;
+}
+.archive-hero--has-image {
+	background-size: cover;
+	background-position: center;
+	position: relative;
+	min-height: 260px;
+	display: flex;
+	align-items: flex-end;
+}
+.archive-hero--has-image::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient( to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100% );
+}
+.archive-hero--has-image .archive-hero__inner { position: relative; }
+.archive-hero--has-image .archive-hero__title,
+.archive-hero--has-image .woocommerce-breadcrumb,
+.archive-hero--has-image .woocommerce-breadcrumb a { color: #ffffff; }
+
+.archive-hero .woocommerce-breadcrumb {
+	font-family: var(--font-body);
+	font-size: 0.75rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(19,19,19,0.45);
+	margin-bottom: 0.75rem;
+	display: block;
+}
+.archive-hero .woocommerce-breadcrumb a { color: rgba(19,19,19,0.45); transition: color 0.2s ease; }
+.archive-hero .woocommerce-breadcrumb a:hover { color: var(--color-primario); }
+
+.archive-hero__title {
+	font-family: var(--font-heading);
+	font-size: clamp(2rem, 5vw, 3.5rem);
+	text-transform: uppercase;
+	letter-spacing: -0.02em;
+	color: var(--color-negro);
+	line-height: 1;
+}
+.archive-hero__desc {
+	font-family: var(--font-body);
+	font-size: 0.9375rem;
+	color: rgba(19,19,19,0.65);
+	max-width: 60ch;
+	line-height: 1.65;
+}
+
+/* ── Contenido ── */
+.archive-content { padding-top: 2.5rem; padding-bottom: 4rem; }
+
+/* ── Barra toolbar ── */
+.archive-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid var(--color-gris);
+	padding-bottom: 1.25rem;
+	margin-bottom: 2.5rem;
+}
+.archive-toolbar .woocommerce-result-count {
+	font-family: var(--font-body);
+	font-size: 0.8125rem;
+	color: rgba(19,19,19,0.45);
+	letter-spacing: 0.04em;
+	margin: 0;
+}
+.archive-toolbar .woocommerce-ordering select {
+	font-family: var(--font-body);
+	font-size: 0.8125rem;
+	color: var(--color-negro);
+	border: 1px solid var(--color-gris);
+	padding: 0.4rem 2rem 0.4rem 0.75rem;
+	appearance: none;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23131313'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+	background-size: 10px;
+	cursor: pointer;
+}
+
+/* ── Eliminar clearfix que crea celda fantasma en el grid ── */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after,
+.woocommerce .products ul::before,
+.woocommerce .products ul::after,
+.woocommerce-page ul.products::before,
+.woocommerce-page ul.products::after {
+	display: none !important;
+}
+
+/* ── Grid de productos ── */
+.woocommerce ul.products,
+.woocommerce-page ul.products {
+	display: grid !important;
+	grid-template-columns: repeat(3, 1fr) !important;
+	gap: 2rem !important;
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important;
+}
+
+/* ── Card — usa .producto-card de main.css, solo reset de WC ── */
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product {
+	float: none !important;
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* ── Paginación ── */
+.archive-pagination {
+	display: flex;
+	justify-content: center;
+	margin-top: 3rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--color-gris);
+}
+.woocommerce nav.woocommerce-pagination ul {
+	display: flex;
+	gap: 0.25rem;
+	list-style: none;
+}
+.woocommerce nav.woocommerce-pagination ul li a,
+.woocommerce nav.woocommerce-pagination ul li span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	font-family: var(--font-body);
+	font-size: 0.875rem;
+	color: rgba(19,19,19,0.5);
+	border: 1px solid transparent;
+	transition: all 0.2s ease;
+}
+.woocommerce nav.woocommerce-pagination ul li a:hover { color: var(--color-negro); border-color: var(--color-gris); }
+.woocommerce nav.woocommerce-pagination ul li span.current {
+	color: var(--color-blanco);
+	background-color: var(--color-negro);
+	border-color: var(--color-negro);
+}
+
+/* ── Sin productos ── */
+.woocommerce-info {
+	font-family: var(--font-body);
+	font-size: 0.9375rem;
+	color: rgba(19,19,19,0.55);
+	border-top: 3px solid var(--color-primario);
+	padding: 1.5rem;
+	background: var(--color-gris);
+}
