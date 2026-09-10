@@ -172,6 +172,14 @@ function sanisidro_enqueue_assets(): void {
 		true
 	);
 
+	wp_enqueue_script(
+		'sanisidro-mobile-menu',
+		$uri . '/assets/js/mobile-menu.js',
+		[],
+		filemtime( $dir . '/assets/js/mobile-menu.js' ),
+		true
+	);
+
 	if ( is_woocommerce() && ! is_singular( 'product' ) ) {
 		wp_enqueue_style(
 			'sanisidro-archive-product',

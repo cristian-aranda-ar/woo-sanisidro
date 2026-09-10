@@ -224,6 +224,29 @@ p { max-width: 68ch; }
 	transition: filter var(--transition);
 }
 
+/* Toggle menú móvil (oculto en desktop) */
+.menu-toggle {
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+.menu-toggle__bar {
+	display: block;
+	width: 24px;
+	height: 2px;
+	background-color: var(--color-negro);
+	transition: transform var(--transition), opacity var(--transition), background-color var(--transition);
+}
+.home .site-header .menu-toggle__bar { background-color: var(--color-blanco); }
+
 /* Navegación */
 .site-nav__list {
 	display: flex;
@@ -1569,3 +1592,200 @@ body.cart-open { overflow: hidden; }
 	transition: color var(--transition);
 }
 .toast__close:hover { color: var(--color-blanco); }
+
+/* ================================================================
+   RESPONSIVE — TABLET (≤ 900px)
+================================================================ */
+@media (max-width: 900px) {
+	.productos-grid,
+	.recetas-grid,
+	.recetas-grid--archive {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.site-footer__main {
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--space-8) var(--space-12);
+	}
+	.footer-logo { grid-column: 1 / -1; }
+	.nosotros-intro,
+	.contacto-content {
+		grid-template-columns: 1fr;
+		gap: var(--space-12);
+	}
+}
+
+/* ================================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+================================================================ */
+@media (max-width: 768px) {
+	:root {
+		--container-pad: 1.25rem;
+		--space-16: 2.5rem;
+	}
+
+	/* ---- Header ---- */
+	.site-header__inner {
+		gap: var(--space-4);
+		padding-block: var(--space-4);
+	}
+	.menu-toggle { display: flex; }
+	.site-nav--center,
+	.site-nav--secondary,
+	.btn-ingresar {
+		display: none;
+	}
+	.site-header__right { gap: var(--space-3); }
+	.site-logo img { width: 110px; }
+	.header-action { min-width: 44px; min-height: 44px; justify-content: center; }
+
+	/* ---- Drawer del menú móvil ---- */
+	body.nav-open { overflow: hidden; }
+	body.nav-open .site-header__inner {
+		position: fixed;
+		inset: 0;
+		height: 100dvh;
+		z-index: 999;
+		background-color: var(--color-negro);
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+		padding: var(--space-6) var(--container-pad);
+		overflow-y: auto;
+	}
+	body.nav-open .menu-toggle { align-self: flex-end; order: -1; }
+	body.nav-open .menu-toggle__bar { background-color: var(--color-blanco); }
+	body.nav-open .menu-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+	body.nav-open .menu-toggle__bar:nth-child(2) { opacity: 0; }
+	body.nav-open .menu-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+	body.nav-open .site-logo { display: none; }
+
+	body.nav-open .site-nav--center,
+	body.nav-open .site-nav--secondary {
+		display: block;
+		width: 100%;
+		margin-top: var(--space-6);
+	}
+	body.nav-open .site-header__right {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		width: 100%;
+	}
+	body.nav-open .site-nav__list,
+	body.nav-open .site-header__right .site-nav__list {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-4);
+	}
+	body.nav-open .site-nav__list a {
+		color: var(--color-blanco);
+		font-size: var(--text-lg);
+	}
+	/* El submenú ya no es un dropdown al hover/click: queda siempre desplegado */
+	body.nav-open .site-nav__list .menu-item-has-children > a::after {
+		display: none;
+	}
+	body.nav-open .site-nav__list .sub-menu {
+		position: static;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		transform: none;
+		opacity: 1;
+		visibility: visible;
+		background: transparent;
+		border-top: none;
+		box-shadow: none;
+		list-style: none;
+		padding: var(--space-3) 0 0 var(--space-4);
+		margin-top: var(--space-1);
+		border-left: 1px solid rgba(255, 255, 255, 0.2);
+	}
+	body.nav-open .site-nav__list .sub-menu a {
+		display: block;
+		padding: 0;
+		font-size: var(--text-base);
+		color: rgba(255, 255, 255, 0.65);
+	}
+	body.nav-open .header-actions {
+		margin-top: var(--space-8);
+		width: 100%;
+		justify-content: flex-start;
+		gap: var(--space-6);
+	}
+	body.nav-open .btn-ingresar {
+		display: inline-flex;
+		background-color: transparent;
+		border: 1px solid var(--color-blanco);
+	}
+	body.nav-open .header-action { color: var(--color-blanco); }
+
+	/* ---- Hero ---- */
+	.home-hero { height: 70vh; min-height: 420px; }
+	.hero-overlay-logo img { width: clamp(140px, 55vw, 260px); }
+
+	/* ---- S1: Productos ---- */
+	.home-productos { padding: var(--space-16) 0; }
+	.section-title { margin-bottom: var(--space-8); }
+
+	/* ---- S2: Categorías split ---- */
+	.home-categorias { grid-template-columns: 1fr; min-height: auto; }
+	.home-categorias__imagen { aspect-ratio: 4 / 3; }
+	.home-categorias__texto { padding: var(--space-8) var(--container-pad); }
+	.cat-mas-svg { width: 160px; }
+
+	/* ---- S3: Manifiesto ---- */
+	.home-manifiesto { grid-template-columns: 1fr; min-height: auto; }
+	.home-manifiesto__texto,
+	.home-manifiesto__imagenes { min-height: 280px; }
+
+	/* ---- S4: Somos campo split ---- */
+	.home-nosotros { grid-template-columns: 1fr; min-height: auto; }
+	.home-nosotros__imagen { aspect-ratio: 4 / 3; min-height: 260px; }
+	.home-nosotros__texto { padding: var(--space-8) var(--container-pad); }
+
+	/* ---- S5: Recetas ---- */
+	.home-recetas { padding: var(--space-16) 0; }
+
+	/* ---- S6: Instagram ---- */
+	.instagram-grid { grid-template-columns: repeat(2, 1fr); }
+
+	/* ---- Footer ---- */
+	.site-footer__main { padding: var(--space-12) var(--container-pad); }
+
+	/* ---- Evita el zoom automático de iOS al enfocar inputs con font-size < 16px ---- */
+	.form-group input,
+	.form-group textarea,
+	.wc-quantity-input { font-size: 16px; }
+
+	/* ---- Área táctil del stepper de cantidad en el side cart ---- */
+	.wc-quantity-button,
+	.wc-block-cart-item__remove-link { width: 38px; height: 38px; }
+
+	/* ---- Otras páginas del sitio ---- */
+	.recetas-grid--archive { gap: 2rem 1.5rem; }
+	.nosotros-stats__grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+	.post-navigation .nav-links { flex-direction: column; gap: 1rem; }
+	.post-navigation .nav-previous,
+	.post-navigation .nav-next { max-width: 100%; }
+	.post-navigation .nav-next { align-items: flex-start; margin-left: 0; }
+	.side-cart { width: 100%; }
+}
+
+/* ================================================================
+   RESPONSIVE — MOBILE CHICO (≤ 480px)
+================================================================ */
+@media (max-width: 480px) {
+	.productos-grid,
+	.recetas-grid,
+	.recetas-grid--archive {
+		grid-template-columns: 1fr;
+	}
+	.site-footer__main { grid-template-columns: 1fr; text-align: left; }
+	.footer-logo { grid-column: auto; }
+	.site-footer__bar-inner { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+	.nosotros-stats__grid { grid-template-columns: repeat(2, 1fr); }
+	.instagram-grid { grid-template-columns: repeat(2, 1fr); }
+}

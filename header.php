@@ -9,7 +9,14 @@
 <?php wp_body_open(); ?>
 
 <header class="site-header">
-	<div class="site-header__inner">
+	<div class="site-header__inner" id="site-header__inner">
+
+		<!-- Toggle menú móvil -->
+		<button type="button" class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-header__inner">
+			<span class="menu-toggle__bar"></span>
+			<span class="menu-toggle__bar"></span>
+			<span class="menu-toggle__bar"></span>
+		</button>
 
 		<!-- Nav izquierda -->
 		<nav class="site-nav site-nav--center" aria-label="Principal">

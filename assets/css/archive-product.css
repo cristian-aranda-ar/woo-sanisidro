@@ -158,3 +158,31 @@
 	padding: 1.5rem;
 	background: var(--color-gris);
 }
+
+/* ================================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+================================================================ */
+@media (max-width: 768px) {
+	.archive-hero { padding: 2rem 0 1.75rem; }
+	.archive-hero--has-image { min-height: 200px; }
+	.archive-content { padding-top: 1.75rem; padding-bottom: 2.5rem; }
+
+	.archive-toolbar {
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-bottom: 1.75rem;
+	}
+
+	.woocommerce ul.products,
+	.woocommerce-page ul.products {
+		grid-template-columns: repeat(2, 1fr) !important;
+		gap: 1.5rem !important;
+	}
+}
+
+@media (max-width: 480px) {
+	.woocommerce ul.products,
+	.woocommerce-page ul.products {
+		grid-template-columns: 1fr !important;
+	}
+}
