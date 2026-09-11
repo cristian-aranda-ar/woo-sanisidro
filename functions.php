@@ -81,6 +81,64 @@ add_action( 'wp', function () {
 	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
 } );
 
+// Devuelve el valor (texto) de un atributo del producto por su etiqueta, o '' si no existe
+function sanisidro_get_product_attribute_value( WC_Product $product, string $label ): string {
+	foreach ( $product->get_attributes() as $attribute ) {
+		if ( strcasecmp( wc_attribute_label( $attribute->get_name() ), $label ) !== 0 ) continue;
+		$values = $attribute->is_taxonomy()
+			? wc_get_product_terms( $product->get_id(), $attribute->get_name(), [ 'fields' => 'names' ] )
+			: $attribute->get_options();
+		return implode( ', ', $values );
+	}
+	return '';
+}
+
+// Extrae el primer número (acepta coma o punto decimal) del texto de Kilaje, ej. "1,5 KG APROX" → 1.5
+function sanisidro_get_product_kilaje_number( WC_Product $product ): ?float {
+	$kilaje = sanisidro_get_product_attribute_value( $product, 'Kilaje' );
+	if ( ! $kilaje ) return null;
+	if ( ! preg_match( '/(\d+(?:[.,]\d+)?)/', $kilaje, $m ) ) return null;
+	return (float) str_replace( ',', '.', $m[1] );
+}
+
+// Formatea un número al estilo argentino (coma decimal, sin ceros de más), ej. 1.5 → "1,5"
+function sanisidro_format_kilaje_number( float $num ): string {
+	$str = rtrim( rtrim( number_format( $num, 2, '.', '' ), '0' ), '.' );
+	return str_replace( '.', ',', $str );
+}
+
+// Mostrar "Precio por pieza de {kilaje}kg · {precio base}" debajo del precio total (precio es prioridad 10)
+add_action( 'woocommerce_single_product_summary', function () {
+	global $product;
+	if ( ! $product instanceof WC_Product ) return;
+
+	$kilaje = sanisidro_get_product_kilaje_number( $product );
+	if ( ! $kilaje ) return;
+
+	echo '<p class="precio-nota">Precio por pieza de ' . esc_html( sanisidro_format_kilaje_number( $kilaje ) ) . 'kg* &middot; ' . wc_price( (float) $product->get_price(), [ 'decimals' => 0 ] ) . '*</p>';
+	echo '<p class="precio-disclaimer">* El peso y el precio son estimados; el valor final se muestra en el vínculo de pago.</p>';
+}, 11 );
+
+// El precio mostrado en el detalle del producto = precio ÷ kilaje (precio real de la pieza)
+add_filter( 'woocommerce_get_price_html', function ( $html, $product ) {
+	if ( ! is_product() || ! $product instanceof WC_Product ) return $html;
+	if ( (int) $product->get_id() !== get_queried_object_id() ) return $html;
+
+	$kilaje = sanisidro_get_product_kilaje_number( $product );
+	if ( ! $kilaje ) return $html;
+
+	$unit = '<span class="price-unit">/kg</span>';
+
+	if ( $product->is_on_sale() && $product->get_regular_price() !== '' ) {
+		$regular_total = (float) $product->get_regular_price() / $kilaje;
+		$sale_total    = (float) $product->get_price() / $kilaje;
+		return '<del aria-hidden="true">' . wc_price( $regular_total, [ 'decimals' => 0 ] ) . '</del> <ins>' . wc_price( $sale_total, [ 'decimals' => 0 ] ) . '</ins>' . $unit;
+	}
+
+	$total = (float) $product->get_price() / $kilaje;
+	return wc_price( $total, [ 'decimals' => 0 ] ) . $unit;
+}, 10, 2 );
+
 // Mostrar atributos del producto debajo del product_meta (prioridad 45, meta es 40)
 add_action( 'woocommerce_single_product_summary', function () {
 	global $product;
@@ -288,4 +346,69 @@ function sanisidro_customize_register( WP_Customize_Manager $wp_customize ): voi
 		$wp_customize->add_control( $id, [ 'label' => $id, 'section' => 'sanisidro_footer_cols', 'type' => 'text' ] );
 	}
 }
+
+/* ================================================================
+   WOOCOMMERCE — CHECKOUT
+================================================================ */
+// Renombrar "Phone" → "Teléfono (WhatsApp)" y marcar el email como "(Opcional)"
+// (afecta Mi cuenta, emails y el checkout con bloques)
+add_filter( 'gettext', function ( $translated, $original, $domain ) {
+	if ( $domain !== 'woocommerce' ) return $translated;
+	if ( $original === 'Phone' ) return 'Teléfono (WhatsApp)';
+	if ( $original === 'Email address' ) return $translated . ' (Opcional)';
+	return $translated;
+}, 10, 3 );
+
+// Quitar País, Provincia y Código postal en las direcciones de Mi cuenta (checkout clásico)
+add_filter( 'woocommerce_default_address_fields', function ( array $fields ): array {
+	unset( $fields['country'], $fields['state'], $fields['postcode'] );
+	return $fields;
+} );
+
+// Ocultar País/Provincia/Código postal en el checkout y completarlos con un valor fijo
+// (el negocio solo opera con retiro local en Misiones, no calcula envío por dirección)
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! is_checkout() ) return;
+	$uri = get_template_directory_uri();
+	$dir = get_template_directory();
+	wp_enqueue_script(
+		'sanisidro-checkout-fields',
+		$uri . '/assets/js/checkout-fields.js',
+		[],
+		filemtime( $dir . '/assets/js/checkout-fields.js' ),
+		true
+	);
+} );
+
+// Envío según ciudad: Garupá siempre gratis; Posadas/Candelaria gratis desde $100.000,
+// por debajo de ese monto el envío queda "a confirmar" junto con el link de pago.
+add_filter( 'woocommerce_package_rates', function ( array $rates, array $package ): array {
+	if ( ! WC()->customer ) return $rates;
+
+	$city = trim( (string) WC()->customer->get_shipping_city() );
+	if ( ! $city ) return $rates;
+
+	$city = function_exists( 'mb_strtolower' ) ? mb_strtolower( $city, 'UTF-8' ) : strtolower( $city );
+	$subtotal = (float) WC()->cart->get_subtotal();
+
+	foreach ( $rates as $rate_id => $rate ) {
+		if ( strpos( $rate_id, 'flat_rate' ) !== 0 ) continue;
+
+		if ( in_array( $city, [ 'garupá', 'garupa' ], true ) ) {
+			$rate->cost = 0;
+			$rate->label = 'Envío gratis';
+		} elseif ( in_array( $city, [ 'posadas', 'candelaria' ], true ) ) {
+			if ( $subtotal >= 100000 ) {
+				$rate->cost = 0;
+				$rate->label = 'Envío gratis';
+			} else {
+				$rate->cost = 0;
+				$rate->label = 'Envío a confirmar (se informa junto al link de pago)';
+			}
+		}
+	}
+
+	return $rates;
+}, 100, 2 );
+
 add_action( 'customize_register', 'sanisidro_customize_register' );

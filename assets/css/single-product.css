@@ -153,6 +153,36 @@
 .single-product p.price del { color: rgba(19, 19, 19, 0.3); font-size: 1.25rem; }
 .single-product p.price ins { text-decoration: none; color: var(--color-primario); }
 
+/* ── Unidad junto al precio (/kg) ── */
+.single-product .price-unit {
+	font-family: var(--font-body);
+	font-size: 1rem;
+	font-weight: 400;
+	text-transform: none;
+	color: rgba(19, 19, 19, 0.5);
+	margin-left: 0.15rem;
+}
+
+/* ── Nota debajo del precio (Precio por pieza · Kilaje) ── */
+.single-product .precio-nota {
+	font-family: var(--font-body);
+	font-size: 0.9375rem;
+	color: var(--color-negro);
+	margin-top: -1rem;
+	margin-bottom: 0.375rem;
+}
+.single-product .precio-disclaimer {
+	font-family: var(--font-body);
+	font-size: 1rem;
+	color: rgb(107 16 16);
+	margin-bottom: 1.5rem;
+	max-width: none;
+	letter-spacing: -1px !important;
+	background-color: rgb(107 16 16 / 12%);
+	padding: 10px 14px;
+	line-height: 1.2rem;
+}
+
 /* ── Cantidad + Botón ── */
 .single-product form.cart {
 	display: flex;
