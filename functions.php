@@ -7,6 +7,8 @@ require_once get_template_directory() . '/inc/set-prices.php';
 require_once get_template_directory() . '/inc/fix-presentacion.php';
 require_once get_template_directory() . '/inc/setup-recetas-page.php';
 require_once get_template_directory() . '/inc/setup-pages.php';
+require_once get_template_directory() . '/inc/order-manager/class-order-manager.php';
+add_action( 'init', [ 'Sanisidro_Order_Manager', 'instance' ] );
 
 /* ================================================================
    WOOCOMMERCE — SINGLE PRODUCT
